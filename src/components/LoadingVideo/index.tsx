@@ -9,6 +9,7 @@ import {
 } from '../../providers/file-provider';
 import { closeIcon, playBtn } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
+import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
 
 interface OverlayImageProps {
   source: string;
@@ -40,10 +41,22 @@ const LoadingVideo = ({
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [isProcess, setIsProcess] = useState<boolean>(false);
+  const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '')
   const styles = createStyles();
   const handleLoadEnd = () => {
     setLoading(false);
   };
+
+  const processThumbNail = async () => {
+    const thumbNail: Thumbnail = await createThumbnail({
+      url: source,
+    })
+    setThumbNailImage(thumbNail.path)
+  }
+  useEffect(() => {
+    processThumbNail()
+  }, [thumbNail])
+
   useEffect(() => {
     if (progress === 100) {
       setIsProcess(true);
@@ -96,14 +109,14 @@ const LoadingVideo = ({
           <SvgXml xml={playBtn} width="50" height="50" />
         </TouchableOpacity>
       )}
-
-      <Image
-        source={{ uri: thumbNail }}
+      {thumbNailImage ? <Image
+        source={{ uri: thumbNailImage }}
         style={[
           styles.image,
           loading ? styles.loadingImage : styles.loadedImage,
         ]}
-      />
+      /> : <View style={styles.image} />}
+
       {loading && (
         <View style={styles.overlay}>
           {isProcess ? (

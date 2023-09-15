@@ -22,15 +22,12 @@ import {
   playVideoIcon,
 } from '../../svg/svg-xml-list';
 import { styles } from './styles';
-// import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
+import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
 // import * as ImagePicker from 'expo-image-picker';
-
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
 // import * as VideoThumbnails from 'expo-video-thumbnails';
-// import { Video, ResizeMode } from 'expo-av';
-import ImagePicker, { type ImageOrVideo } from 'react-native-image-crop-picker';
 
 export interface IDisplayImage {
   url: string;
@@ -146,18 +143,38 @@ const CreatePost = ({ route }: any) => {
 
     // const permission = await ImagePicker();
 
-    const result: ImageOrVideo = await ImagePicker.openCamera({
-      cropping: true,
-      mediaType: 'any'
-    })
+    const result: ImagePicker.ImagePickerResponse = await launchCamera({
+      mediaType: 'mixed',
+      quality: 1,
+      presentationStyle: 'fullScreen',
+      videoQuality: 'high',
+
+    });
+
+
 
     if (
-      result
+      result.assets &&
+
+      result.assets.length > 0 &&
+      result.assets[0] !== null &&
+      result.assets[0]
     ) {
-      const imagesArr = [...imageMultipleUri];
-      console.log('imagesArr:', imagesArr)
-      imagesArr.push(result.sourceURL as string);
-      setImageMultipleUri(imagesArr);
+      if (result.assets[0].type?.includes('image')) {
+        console.log('result.assets:', result.assets)
+        const imagesArr
+          = [...imageMultipleUri];
+        console.log('imagesArr:', imagesArr)
+        imagesArr.push(result.assets[0].uri as string);
+        setImageMultipleUri(imagesArr);
+      } else {
+        const selectedVideos: Asset[] = result.assets;
+        const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
+        const videosArr: string[] = [...videoMultipleUri];
+        const totalVideos: string[] = videosArr.concat(imageUriArr);
+        setVideoMultipleUri(totalVideos);
+      }
+
     }
 
 
@@ -206,14 +223,13 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         videoMultipleUri.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          // const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
+
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            // thumbNail: thumbnail.uri ,
-            thumbNail: '',
+            thumbNail: '' ,
           };
         })
       );
@@ -226,14 +242,13 @@ const CreatePost = ({ route }: any) => {
       const videosObject: IDisplayImage[] = await Promise.all(
         filteredDuplicate.map(async (url: string) => {
           const fileName: string = url.substring(url.lastIndexOf('/') + 1);
-          // const thumbnail = await VideoThumbnails.getThumbnailAsync(url);
           return {
             url: url,
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            // thumbNail: thumbnail.uri ,
-            thumbNail: '',
+            thumbNail: '' ,
+
           };
         })
       );
@@ -242,37 +257,38 @@ const CreatePost = ({ route }: any) => {
   };
   useEffect(() => {
     processVideo();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
 
-    const result: ImageOrVideo[] = await ImagePicker.openPicker({
-      cropping: true,
-      multiple: true,
-      mediaType: 'photo'
-    })
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
 
+      mediaType: 'photo',
+      quality: 1,
+      selectionLimit: 10
+
+    });
     console.log('result:', result)
-
-    if (result) {
-
-      const imageUriArr: string[] = result.map((item: ImageOrVideo) => item.sourceURL) as string[];
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedImages: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedImages.map((item: Asset) => item.uri) as string[];
       const imagesArr = [...imageMultipleUri];
       const totalImages = imagesArr.concat(imageUriArr);
       setImageMultipleUri(totalImages);
     }
   };
-
   const pickVideo = async () => {
-    const result: ImageOrVideo[] = await ImagePicker.openPicker({
-      cropping: true,
-      multiple: true,
-      mediaType: 'video'
-    })
-
-
-    if (result) {
-      const imageUriArr: string[] = result.map((item:ImageOrVideo) => item.sourceURL) as string[];
+    const result: ImagePicker.ImagePickerResponse = await launchImageLibrary({
+      mediaType: 'video',
+      quality: 1,
+      selectionLimit: 10,
+    });
+    console.log('result:', result)
+    if (!result.didCancel && result.assets && result.assets.length > 0) {
+      const selectedVideos: Asset[] = result.assets;
+      const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];
       const videosArr = [...videoMultipleUri];
       const totalVideos = videosArr.concat(imageUriArr);
       setVideoMultipleUri(totalVideos);
@@ -399,7 +415,7 @@ const CreatePost = ({ route }: any) => {
         <View style={styles.InputWrap}>
           <TouchableOpacity
             disabled={displayVideos.length > 0 ? true : false}
-          onPress={pickCamera}
+            onPress={pickCamera}
           >
             <View style={styles.iconWrap}>
               <SvgXml xml={cameraIcon} width="27" height="27" />
