@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { SvgXml } from 'react-native-svg';
@@ -10,7 +10,7 @@ import {
 import { closeIcon, playBtn } from '../../svg/svg-xml-list';
 import { createStyles } from './styles';
 import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
-
+import Video from 'react-native-video';
 interface OverlayImageProps {
   source: string;
   onClose?: (originalPath: string) => void;
@@ -26,7 +26,7 @@ interface OverlayImageProps {
   isUploaded: boolean;
   fileId?: string;
   thumbNail: string;
-  onPlay: (fileUrl: string) => void;
+  onPlay?: (fileUrl: string) => void;
 }
 const LoadingVideo = ({
   source,
@@ -43,6 +43,29 @@ const LoadingVideo = ({
   const [isProcess, setIsProcess] = useState<boolean>(false);
   const [thumbNailImage, setThumbNailImage] = useState(thumbNail ?? '')
   const styles = createStyles();
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [playingUri, setPlayingUri] = useState<string>('')
+  const videoPlayerRef = useRef(null);
+  
+  const playVideoFullScreen = (fileUrl: string) => {
+    console.log('playVideoFullScreen:')
+    setIsPlaying(true)
+    setPlayingUri(fileUrl)
+   
+  };
+  const onClosePlayer = () => {
+    setIsPlaying(false);
+    setPlayingUri('')
+  }
+
+  useEffect(() => {
+    if (videoPlayerRef && isPlaying) {
+      (
+        videoPlayerRef as React.MutableRefObject<any>
+      ).current.presentFullscreenPlayer();
+    }
+  }, [isPlaying, playingUri])
+
   const handleLoadEnd = () => {
     setLoading(false);
   };
@@ -100,6 +123,8 @@ const LoadingVideo = ({
     }
   }, [fileId, isUploaded, source]);
   const handleOnPlay = () => {
+    console.log('play')
+    playVideoFullScreen(source)
     onPlay && onPlay(source);
   };
   return (
@@ -136,6 +161,12 @@ const LoadingVideo = ({
           <SvgXml xml={closeIcon} width="12" height="12" />
         </TouchableOpacity>
       )}
+      <Video
+        source={{ uri: playingUri }}
+        onFullscreenPlayerWillDismiss={onClosePlayer}
+        ref={videoPlayerRef}
+        fullscreen={true}
+      />
     </View>
   );
 };

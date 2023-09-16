@@ -23,11 +23,9 @@ import {
 } from '../../svg/svg-xml-list';
 import { styles } from './styles';
 import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
-// import * as ImagePicker from 'expo-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
-// import * as VideoThumbnails from 'expo-video-thumbnails';
 
 export interface IDisplayImage {
   url: string;
@@ -45,19 +43,6 @@ const CreatePost = ({ route }: any) => {
   const [displayImages, setDisplayImages] = useState<IDisplayImage[]>([]);
   const [displayVideos, setDisplayVideos] = useState<IDisplayImage[]>([]);
 
-  const videoRef = React.useRef(null);
-
-  const playVideoFullScreen = async (fileUrl: string) => {
-    if (videoRef) {
-      await (videoRef as React.MutableRefObject<any>).current.loadAsync({
-        uri: fileUrl,
-      });
-      await (
-        videoRef as React.MutableRefObject<any>
-      ).current.presentFullscreenPlayer();
-      await (videoRef as React.MutableRefObject<any>).current.playAsync()();
-    }
-  };
   const goBack = () => {
     navigation.navigate('Home');
   };
@@ -215,7 +200,6 @@ const CreatePost = ({ route }: any) => {
       );
       setDisplayImages((prev) => [...prev, ...imagesObject]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageMultipleUri]);
 
   const processVideo = async () => {
@@ -229,7 +213,7 @@ const CreatePost = ({ route }: any) => {
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: '' ,
+            thumbNail: '',
           };
         })
       );
@@ -247,7 +231,7 @@ const CreatePost = ({ route }: any) => {
             fileName: fileName,
             fileId: '',
             isUploaded: false,
-            thumbNail: '' ,
+            thumbNail: '',
 
           };
         })
@@ -257,8 +241,6 @@ const CreatePost = ({ route }: any) => {
   };
   useEffect(() => {
     processVideo();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoMultipleUri]);
 
   const pickImage = async () => {
@@ -359,6 +341,7 @@ const CreatePost = ({ route }: any) => {
     });
   };
 
+
   return (
     <View style={styles.AllInputWrap}>
       <KeyboardAvoidingView
@@ -403,7 +386,6 @@ const CreatePost = ({ route }: any) => {
                     isUploaded={item.isUploaded}
                     fileId={item.fileId}
                     thumbNail={item.thumbNail as string}
-                    onPlay={playVideoFullScreen}
                   />
                 )}
                 numColumns={3}
@@ -443,7 +425,8 @@ const CreatePost = ({ route }: any) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      {/* <Video ref={videoRef} resizeMode={ResizeMode.CONTAIN} /> */}
+
+
     </View>
   );
 };
