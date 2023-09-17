@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { type RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -10,8 +10,8 @@ import {
   Keyboard,
   ScrollView,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 
 import type { RootStackParamList } from 'src/routes/RouteParamList';
@@ -38,7 +38,7 @@ const PostDetail = () => {
     initImagePostsFullSize,
   } = route.params;
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment<any>>>();
+  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
   console.log('comments:', comments)
   const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
@@ -83,7 +83,7 @@ const PostDetail = () => {
         referenceId: postId,
         referenceType: 'post',
       },
-      (data: Amity.LiveCollection<Amity.Comment<any>>) => {
+      (data: Amity.LiveCollection<Amity.Comment>) => {
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
@@ -117,7 +117,7 @@ const PostDetail = () => {
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
       const formattedCommentList = await Promise.all(
-        comments.map(async (item: Amity.Comment<any>) => {
+        comments.map(async (item: Amity.Comment) => {
           const { userObject } = await getAmityUser(item.userId);
           let formattedUserObject: UserInterface;
 

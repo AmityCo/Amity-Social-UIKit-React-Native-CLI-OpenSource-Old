@@ -6,8 +6,8 @@ import {
   Text,
   Modal,
   SectionList,
-  NativeScrollEvent,
-  ListRenderItemInfo,
+  type NativeScrollEvent,
+  type ListRenderItemInfo,
   TextInput,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';

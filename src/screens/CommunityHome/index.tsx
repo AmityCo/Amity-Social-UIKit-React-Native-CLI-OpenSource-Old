@@ -1,15 +1,15 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, { type MutableRefObject, useEffect, useRef, useState } from 'react';
 import {
   View,
   Image,
   Text,
   TouchableOpacity,
   ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import CustomTab from '../../components/CustomTab';
 import CloseButton from '../../components/BackButton';

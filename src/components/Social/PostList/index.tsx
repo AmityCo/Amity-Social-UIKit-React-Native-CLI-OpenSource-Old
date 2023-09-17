@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
-  ReactElement,
-  ReactNode,
+  type ReactElement,
+  type ReactNode,
   useCallback,
   useEffect,
   useRef,
@@ -15,8 +15,8 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
-  StyleProp,
-  ImageStyle,
+  type StyleProp,
+  type  ImageStyle,
   Modal,
   Pressable,
   Animated,

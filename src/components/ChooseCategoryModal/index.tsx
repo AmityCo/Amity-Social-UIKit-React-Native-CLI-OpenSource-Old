@@ -9,8 +9,8 @@ import {
   Platform,
   Image,
   FlatList,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type NativeScrollEvent,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { categoryIcon, closeIcon } from '../../svg/svg-xml-list';

@@ -9,8 +9,8 @@ import {
   Animated,
   Modal,
   Pressable,
-  StyleProp,
-  ImageStyle,
+  type StyleProp,
+  type ImageStyle,
   LogBox,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';

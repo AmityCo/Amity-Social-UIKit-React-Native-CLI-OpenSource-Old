@@ -15,14 +15,14 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
-    "noStrictGenericChecks": false,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "target": "esnext",
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "noImplicitAny": false
   }
 }

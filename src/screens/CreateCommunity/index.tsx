@@ -26,7 +26,7 @@ import { createCommunity, type ICreateCommunity } from '../../providers/Social/c
 
 export default function CreateCommunity() {
 
-  const [image, setImage] = useState<string>();
+  const [image] = useState<string>();
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
   const [categoryId, setCategoryId] = useState<string>('');

@@ -11,7 +11,7 @@ import React, {
 
 import { FlatList, View } from 'react-native';
 import useAuth from '../../hooks/useAuth';
-import PostList, { IPost } from '../../components/Social/PostList';
+import PostList, { type IPost } from '../../components/Social/PostList';
 import styles from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';

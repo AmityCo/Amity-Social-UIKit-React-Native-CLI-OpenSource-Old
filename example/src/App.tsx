@@ -4,11 +4,11 @@ import { AmityUiKitProvider, AmityUiKitSocial } from 'amity-react-native-social-
 export default function App() {
   return (
     <AmityUiKitProvider
-      apiKey="b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f"
-      apiRegion="sg"
-      userId="John"
-      displayName="John"
-      apiEndpoint="https://api.sg.amity.co"
+      apiKey="API_KEY"
+      apiRegion="API_REGION"
+      userId="userId"
+      displayName="displayName"
+      apiEndpoint="https://api.{API_REGION}.amity.co"
     >
       <AmityUiKitSocial />
     </AmityUiKitProvider>

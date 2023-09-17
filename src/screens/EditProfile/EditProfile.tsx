@@ -14,9 +14,9 @@ import {
 import {
   launchCamera,
   launchImageLibrary,
-  CameraOptions,
-  ImageLibraryOptions,
-  ImagePickerResponse,
+  type CameraOptions,
+  type ImageLibraryOptions,
+  type   ImagePickerResponse,
 } from 'react-native-image-picker';
 import { styles } from './styles';
 import CloseButton from '../../components/BackButton/index';

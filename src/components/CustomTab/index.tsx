@@ -1,8 +1,8 @@
-import React, { ReactElement, useState } from 'react';
+import React, { type ReactElement, useState } from 'react';
 import {
   Animated,
-  LayoutChangeEvent,
-  StyleProp,
+  type LayoutChangeEvent,
+  type StyleProp,
   Text,
   TouchableOpacity,
   View,
