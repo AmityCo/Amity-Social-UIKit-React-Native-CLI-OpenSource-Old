@@ -57,7 +57,7 @@ Then, inside another project, Copy tgz file to your application folder where you
 
 ```sh
 1. yarn add ./amity-react-native-social-ui-kit-x.x.x.tgz
-2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens \react-native-video \react-native-create-thumbnail@1.6.0
+2. yarn add react-native-safe-area-context \react-native-image-picker \@react-native-async-storage/async-storage \react-native-svg@13.4.0 \react-native-screens \react-native-video \react-native-create-thumbnail@1.6.0 \@react-native-community/netinfo
 ```
 ### iOS Configuration
 ```sh
@@ -90,7 +90,7 @@ import * as React from 'react';
 import {
   AmityUiKitSocial,
   AmityUiKitProvider,
-} from '@amityco/asc-react-native-ui-kit';
+} from 'amity-react-native-social-ui-kit';
 
 export default function App() {
   return (
