@@ -14,6 +14,7 @@ import {
   VirtualizedList,
   Modal,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { playBtn } from '../../../svg/svg-xml-list';
@@ -24,6 +25,7 @@ import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
 import Video from 'react-native-video';
+import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_ANIMATION_TYPE = 'fade';
 const DEFAULT_BG_COLOR = '#000';
@@ -50,6 +52,7 @@ function ImageViewing({
   onClickPlayButton = () => { },
   videoPosts,
 }) {
+  const navigation = useNavigation();
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
   const [currentImageIndex, onScroll] = useImageIndexChange(imageIndex, SCREEN);
@@ -79,9 +82,14 @@ function ImageViewing({
     [imageList]
   );
   const playVideoFullScreen = async () => {
-    onClickPlayButton(currentImageIndex);
-    setIsPlaying(true)
-    setPlayingUri(`https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
+    if(Platform.OS === 'ios'){
+      onClickPlayButton(currentImageIndex);
+      setIsPlaying(true)
+      setPlayingUri(`https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
+    }else{
+      navigation.navigate('VideoPlayer', { source: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
+    }
+
   };
 
   useEffect(() => {

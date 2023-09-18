@@ -21,6 +21,7 @@ import UserProfileSetting from '../screens/UserProfileSetting/UserProfileSetting
 import CommunitySearch from '../screens/CommunitySearch';
 import AllMyCommunity from '../screens/AllMyCommunity';
 import CreateCommunity from '../screens/CreateCommunity';
+import VideoPlayerFull from '../screens/VideoPlayerFullScreen';
 
 export default function SocialNavigator() {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -69,6 +70,10 @@ export default function SocialNavigator() {
           <Stack.Screen name="CommunityList" component={CommunityList} />
           <Stack.Screen name="AllMyCommunity" component={AllMyCommunity} />
           <Stack.Screen name="CreatePost" component={CreatePost} />
+          <Stack.Screen name="VideoPlayer"
+            options={{
+              headerShown: false,
+            }} component={VideoPlayerFull} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen
