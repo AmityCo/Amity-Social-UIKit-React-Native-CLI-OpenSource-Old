@@ -24,7 +24,7 @@ cd example
 yarn
 ```
 2. Configure your apiKey,apiRegion,apiEndpoint,userId,displayName in /example/src/App.tsx file(https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/blob/main/example/src/App.tsx) first before run the sample app
-<img width="1503" alt="Screenshot 2566-09-18 at 00 32 49" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/112688936/7fd7308a-246b-4bda-a150-34de1ecf8db1">
+<img width="1503" alt="Screenshot 2566-09-18 at 00 32 49" src="https://github.com/AmityCo/Amity-Social-UIKit-React-Native-CLI-OpenSource/assets/112688936/2939ed92-3bfd-4a90-b2a7-f5aafccef084">
 
 3. Go back to your root folder (`cd ..`) and Choose to run between iOS or Android
    
