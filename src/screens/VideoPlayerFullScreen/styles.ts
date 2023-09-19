@@ -12,6 +12,10 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: screenHeight,
   },
+  videoLandscape: {
+    width: screenHeight,
+    height: screenWidth,
+  },
   controls: {
     position: 'absolute',
     bottom: 20,
