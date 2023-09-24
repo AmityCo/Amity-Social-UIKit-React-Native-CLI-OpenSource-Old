@@ -74,7 +74,28 @@ export async function createComment(
   );
   return createCommentObject;
 }
-
+export async function editComment(
+  text: string,
+  commentId: string
+): Promise<Amity.InternalComment> {
+  const createCommentObject: Promise<Amity.InternalComment> = new Promise(
+    async (resolve, reject) => {
+      try {
+        const updatedComment = {
+          data: {
+            text: text,
+          },
+          referenceType: 'post' as Amity.CommentReferenceType,
+        };
+        const { data: comment } = await CommentRepository.updateComment(commentId, updatedComment);
+        resolve(comment);
+      } catch (error) {
+        reject(error);
+      }
+    }
+  );
+  return createCommentObject;
+}
 export async function getCommentsDataByIds(
   commentIds: string[]
 ): Promise<Amity.InternalComment[]> {
