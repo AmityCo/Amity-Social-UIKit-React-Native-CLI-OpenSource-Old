@@ -16,7 +16,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface OverlayImageProps {
   source: string;
-  onClose?: (originalPath: string) => void;
+  onClose?: (originalPath: string, fileId?:string) => void;
   onLoadFinish?: (
     fileId: string,
     fileUrl: string,
@@ -30,6 +30,7 @@ interface OverlayImageProps {
   fileId?: string;
   thumbNail: string;
   onPlay?: (fileUrl: string) => void;
+  isEditMode?: boolean
 }
 const LoadingVideo = ({
   source,
@@ -40,6 +41,7 @@ const LoadingVideo = ({
   thumbNail,
   onPlay,
   fileId,
+  isEditMode = false
 }: OverlayImageProps) => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -52,10 +54,8 @@ const LoadingVideo = ({
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const videoPlayerRef = useRef(null);
 
-  console.log('videoPlayerRef:', videoPlayerRef)
   const playVideoFullScreen = (fileUrl: string) => {
     if (Platform.OS === 'ios') {
-      console.log('playVideoFullScreen:')
       setIsPlaying(true)
       setPlayingUri(fileUrl)
     } else {
@@ -123,8 +123,11 @@ const LoadingVideo = ({
 
   const handleDelete = async () => {
     if (fileId) {
-      await deleteAmityFile(fileId as string);
-      onClose && onClose(source);
+      if (!isEditMode) {
+        await deleteAmityFile(fileId as string);
+      }
+
+      onClose && onClose(source, fileId);
     }
   };
   useEffect(() => {
