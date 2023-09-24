@@ -18,7 +18,6 @@ const VideoPlayerFull = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const [orientation, setOrientation] = useState('LANDSCAPE');
-  console.log('orientation:', orientation)
 
   const determineAndSetOrientation = () => {
     let width = Dimensions.get('window').width;
@@ -39,7 +38,6 @@ const VideoPlayerFull = () => {
   }, []);
 
   const onClose = () => {
-    console.log('onClose:')
     navigation.goBack()
   }
   return (

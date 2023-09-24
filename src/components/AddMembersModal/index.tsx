@@ -31,21 +31,18 @@ export type SelectUserList = {
 const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) => {
   const [sectionedUserList, setSectionedUserList] = useState<SelectUserList[]>([]);
   const [sectionedGroupUserList, setSectionedGroupUserList] = useState<SelectUserList[]>([]);
-  // console.log('sectionedUserList:', sectionedUserList)
   const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>(initUserList);
-  console.log('selectedUserList:', selectedUserList)
   // const [isScrollEnd, setIsScrollEnd] = useState(false);
   const [usersObject, setUsersObject] = useState<Amity.LiveCollection<Amity.User>>();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: userArr = [] } = usersObject ?? {};
-  // console.log('userArr:', userArr)
+  const { data: userArr = [], onNextPage } = usersObject ?? {};
 
 
   useEffect(() => {
- setSelectedUserList(initUserList)
+    setSelectedUserList(initUserList)
   }, [initUserList])
-  
+
   const queryAccounts = (text: string = '') => {
 
     const unsubscribe = UserRepository.searchUserByDisplayName(
@@ -76,9 +73,6 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
   };
 
   const createSectionGroup = () => {
-    // let userListForSection: SelectUserList[] = [...sectionedUserList]
-    // console.log('userListForSection:', userListForSection)
-
     userArr.forEach((item) => {
       const firstChar = (item.displayName as string).charAt(0).toUpperCase();
       const isAlphabet = /^[A-Z]$/i.test(firstChar);
@@ -122,9 +116,9 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
   );
 
   const onUserPressed = (user: UserInterface) => {
-    console.log('user:', user)
+
     const isIncluded = selectedUserList.some(item => item.userId === user.userId)
-    console.log('isIncluded:', isIncluded)
+
     if (isIncluded) {
       const removedUser = selectedUserList.filter(item => item.userId !== user.userId)
       setSelectedUserList(removedUser)
@@ -153,7 +147,7 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
     const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
     const isEnd =
       layoutMeasurement.height + contentOffset.y >= contentSize.height;
-      console.log('isEnd:', isEnd)
+    console.log('isEnd:', isEnd)
     // setIsScrollEnd(isEnd);
   };
   const handleOnClose = () => {
@@ -161,11 +155,11 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
     onClose && onClose();
 
   }
-  // const handleLoadMore = () => {
-  //   if (onNextPage) {
-  //     onNextPage()
-  //   }
-  // }
+  const handleLoadMore = () => {
+    if (onNextPage) {
+      onNextPage()
+    }
+  }
 
   const onDeleteUserPressed = (user: UserInterface) => {
     const removedUser = selectedUserList.filter(item => item !== user)
@@ -218,7 +212,7 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
           renderItem={renderItem}
           onScroll={handleScroll}
           renderSectionHeader={renderSectionHeader}
-          // onEndReached={handleLoadMore}
+          onEndReached={handleLoadMore}
           onEndReachedThreshold={0.8}
         // keyExtractor={(item, index) => index}
         />

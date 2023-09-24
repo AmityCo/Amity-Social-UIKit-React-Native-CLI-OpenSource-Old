@@ -146,10 +146,7 @@ const CreatePost = ({ route }: any) => {
       result.assets[0]
     ) {
       if (result.assets[0].type?.includes('image')) {
-        console.log('result.assets:', result.assets)
-        const imagesArr
-          = [...imageMultipleUri];
-        console.log('imagesArr:', imagesArr)
+        const imagesArr: string[]= [...imageMultipleUri];
         imagesArr.push(result.assets[0].uri as string);
         setImageMultipleUri(imagesArr);
       } else {
@@ -252,7 +249,6 @@ const CreatePost = ({ route }: any) => {
       selectionLimit: 10
 
     });
-    console.log('result:', result)
     if (!result.didCancel && result.assets && result.assets.length > 0) {
       const selectedImages: Asset[] = result.assets;
       const imageUriArr: string[] = selectedImages.map((item: Asset) => item.uri) as string[];
@@ -267,7 +263,6 @@ const CreatePost = ({ route }: any) => {
       quality: 1,
       selectionLimit: 10,
     });
-    console.log('result:', result)
     if (!result.didCancel && result.assets && result.assets.length > 0) {
       const selectedVideos: Asset[] = result.assets;
       const imageUriArr: string[] = selectedVideos.map((item: Asset) => item.uri) as string[];

@@ -66,12 +66,10 @@ export default function CommunitySearch() {
     unsubscribe();
   };
   const searchAccounts = (text: string = '') => {
-    console.log('text:', text)
     if (text.length > 2) {
       const unsubscribe = UserRepository.getUsers(
         { displayName: text, limit: 20, sortBy: 'displayName' },
         (data) => {
-          console.log('data:', data)
           setUsersObject(data);
 
         }

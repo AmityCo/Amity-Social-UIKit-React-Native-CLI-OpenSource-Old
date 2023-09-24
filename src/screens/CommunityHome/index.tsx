@@ -15,12 +15,15 @@ import CustomTab from '../../components/CustomTab';
 import CloseButton from '../../components/BackButton';
 import { styles } from './styles';
 import Feed from '../Feed';
+import useAuth from '../../hooks/useAuth';
 
 export type FeedRefType = {
   handleLoadMore: () => void;
 };
 
 export default function CommunityHome({ navigation, route }: any) {
+
+  const { apiRegion } = useAuth();
   const { communityId, communityName } = route.params;
   const [isJoin, setIsJoin] = useState(true);
   const [communityData, setCommunityData] =
@@ -152,7 +155,7 @@ export default function CommunityHome({ navigation, route }: any) {
           source={
             communityData?.data.avatarFileId
               ? {
-                  uri: `https://api.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
+                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
                 }
               : require('../../../assets/icon/Placeholder.png')
           }

@@ -6,6 +6,7 @@ import { arrowOutlined, communityIcon, officialIcon, privateIcon } from '../../s
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../hooks/useAuth';
 
 interface ICommunityItems {
   communityId: string;
@@ -16,11 +17,12 @@ interface ICommunityItems {
 
 }
 export default function MyCommunity() {
+  const { apiRegion } = useAuth();
   const maxLength = 6;
   const [communityItems, setCommunityItems] = useState<ICommunityItems[]>([])
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   const queryCommunities = () => {
     const unsubscribe = CommunityRepository.getCommunities(

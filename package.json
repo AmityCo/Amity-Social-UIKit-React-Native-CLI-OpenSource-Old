@@ -165,7 +165,7 @@
   },
   "dependencies": {
     "@amityco/ts-sdk": "^6.8.0",
-    "@amityco/ts-sdk-react-native": "^6.8.0",
+    "@amityco/ts-sdk-react-native": "^6.9.0",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-native-community/netinfo": "^9.4.1",
     "@react-native-community/slider": "^4.4.3",

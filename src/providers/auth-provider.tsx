@@ -13,7 +13,8 @@ export const AuthContext = React.createContext<AuthContextInterface>({
   login: () => { },
   logout: () => { },
   isConnected: false,
-  sessionState: ''
+  sessionState: '',
+  apiRegion: 'sg'
 });
 
 export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
@@ -28,14 +29,11 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
   const [isConnecting, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [sessionState, setSessionState] = useState('');
-  console.log('sessionState:', sessionState)
-  console.log('isConnected:', isConnected)
 
   const client: Amity.Client = Client.createClient(apiKey, apiRegion, {
     apiEndpoint: { http: apiEndpoint },
   });
 
-  console.log('client:', client)
   const sessionHandler: Amity.SessionHandler = {
     sessionWillRenewAccessToken(renewal) {
       renewal.renew();
@@ -113,7 +111,8 @@ export const AuthContextProvider: FC<IAmityUIkitProvider> = ({
         client,
         logout,
         isConnected,
-        sessionState
+        sessionState,
+        apiRegion: apiRegion.toLowerCase()
       }}
     >
       {children}

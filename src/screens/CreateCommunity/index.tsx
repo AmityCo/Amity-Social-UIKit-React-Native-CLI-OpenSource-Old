@@ -23,9 +23,11 @@ import { RadioButton } from 'react-native-radio-buttons-group';
 import AddMembersModal from '../../components/AddMembersModal';
 import type { UserInterface } from 'src/types/user.interface';
 import { createCommunity, type ICreateCommunity } from '../../providers/Social/communities-sdk';
+import useAuth from '../../hooks/useAuth';
 
 export default function CreateCommunity() {
 
+  const { apiRegion } = useAuth();
   const [image] = useState<string>();
   const [communityName, setCommunityName] = useState<string>('');
   const [categoryName, setCategoryName] = useState<string>('');
@@ -72,19 +74,16 @@ export default function CreateCommunity() {
   // };
 
   const handleSelectCategory = (categoryId: string, categoryName: string) => {
-    console.log('categoryName:', categoryName)
-    console.log('categoryId:', categoryId)
     setCategoryId(categoryId);
     setCategoryName(categoryName);
   }
 
   const handleAddMembers = (users: UserInterface[]) => {
-    console.log('userIds:', users)
     setSelectedUserList(users)
 
   }
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
 
   const displayName = (user: string) => {
@@ -99,10 +98,8 @@ export default function CreateCommunity() {
   };
 
   const onDeleteUserPressed = (user: UserInterface) => {
-    console.log('user:', user)
     const removedUser = selectedUserList.filter(item => item !== user)
     setSelectedUserList(removedUser)
-    console.log('removedUser:', removedUser)
   }
 
 const onCreateCommunity=async ()=>{
@@ -113,7 +110,6 @@ const onCreateCommunity=async ()=>{
   if(isCreated){
     navigation.navigate('CommunityHome', { communityId: isCreated.communityId, communityName: isCreated.displayName });
   }
-  console.log('isCreated:', isCreated)
 }
   return (
     <ScrollView contentContainerStyle={styles.container}>

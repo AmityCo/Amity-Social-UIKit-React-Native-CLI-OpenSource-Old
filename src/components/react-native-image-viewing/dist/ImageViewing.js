@@ -25,6 +25,7 @@ import useAnimatedComponents from './hooks/useAnimatedComponents';
 import useImageIndexChange from './hooks/useImageIndexChange';
 import useRequestClose from './hooks/useRequestClose';
 import Video from 'react-native-video';
+import useAuth from '../../../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_ANIMATION_TYPE = 'fade';
@@ -52,6 +53,7 @@ function ImageViewing({
   onClickPlayButton = () => { },
   videoPosts,
 }) {
+  const { apiRegion } = useAuth();
   const navigation = useNavigation();
   const imageList = useRef(null);
   const [opacity, onRequestCloseEnhanced] = useRequestClose(onRequestClose);
@@ -85,9 +87,9 @@ function ImageViewing({
     if(Platform.OS === 'ios'){
       onClickPlayButton(currentImageIndex);
       setIsPlaying(true)
-      setPlayingUri(`https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
+      setPlayingUri(`https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download`)
     }else{
-      navigation.navigate('VideoPlayer', { source: `https://api.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
+      navigation.navigate('VideoPlayer', { source: `https://api.${apiRegion}.amity.co/api/v3/files/${videoPosts[currentImageIndex]?.videoFileId?.original}/download` })
     }
 
   };
@@ -103,7 +105,6 @@ function ImageViewing({
   }
 
   const onClosePlayer = () => {
-  	console.log('onClosePlayer:')
     setIsPlaying(false);
     setPlayingUri('')
   }

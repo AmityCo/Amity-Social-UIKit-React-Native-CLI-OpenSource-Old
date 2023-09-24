@@ -16,8 +16,11 @@ import CustomTab from '../../components/CustomTab';
 import type { FeedRefType } from '../CommunityHome';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import useAuth from '../../hooks/useAuth';
 
 export default function UserProfile({ route }: any) {
+
+  const { apiRegion } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { userId } = route.params;
   const [user, setUser] = useState<Amity.User>();
@@ -32,7 +35,7 @@ export default function UserProfile({ route }: any) {
   const scrollViewRef = useRef(null);
 
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   const onEditProfileTap = () => {
     navigation.navigate('EditProfile', {
@@ -220,7 +223,6 @@ export default function UserProfile({ route }: any) {
         ) : (
           <View />
         )}
-        {console.log('check follow status ' + followStatus)}
         {followStatus === 'none' ? (
           followButton()
         ) : followStatus === undefined ? ( // userID is the current user ID

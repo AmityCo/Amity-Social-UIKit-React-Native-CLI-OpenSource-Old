@@ -23,6 +23,7 @@ import CloseButton from '../../components/BackButton/index';
 import DoneButton from '../../components/DoneButton/index';
 import { LoadingOverlay } from '../../components/LoadingOverlay/index';
 import { UserRepository } from '@amityco/ts-sdk-react-native';
+import useAuth from '../../hooks/useAuth';
 
 interface EditProfileProps {
   navigation: any;
@@ -61,6 +62,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   route,
 }) => {
   const MAX_CHARACTER_COUNT = 100;
+  const { apiRegion } = useAuth();
   const [imageUri, setImageUri] = useState<string | undefined>();
   const imageUriRef = useRef(imageUri);
   const [displayName, setDisplayName] = useState<string | undefined>();
@@ -73,7 +75,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const { user } = route.params;
 
   React.useLayoutEffect(() => {
-    // Set the headerRight component to a TouchableOpacity
+
     navigation.setOptions({
       headerLeft: () => <CloseButton />,
       title: 'Edit Profile',
@@ -87,7 +89,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     });
   }, [navigation]);
   const avatarFileURL = (fileId: string) => {
-    return `https://api.amity.co/api/v3/files/${fileId}/download?size=medium`;
+    return `https://api.${apiRegion}.amity.co/api/v3/files/${fileId}/download?size=medium`;
   };
   useEffect(() => {
     setDisplayName(user.displayName);

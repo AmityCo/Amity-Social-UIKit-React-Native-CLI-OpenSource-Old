@@ -19,7 +19,6 @@ export default function GlobalFeed() {
   const { client, isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);
-  console.log('postList:', postList.map(item => item.postId))
   const { data: posts = [], nextPage } = postData ?? {};
 
 

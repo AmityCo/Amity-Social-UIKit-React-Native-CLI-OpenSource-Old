@@ -40,13 +40,11 @@ const PostDetail = () => {
   const [commentList, setCommentList] = useState<IComment[]>([]);
   const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
-  console.log('comments:', comments)
   const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
   console.log('unSubscribeFunc: ', unSubscribeFunc);
-  console.log('postDetail:', postDetail)
   const flatListRef = useRef(null);
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
@@ -66,7 +64,6 @@ const PostDetail = () => {
     }
   
     if (targetType === 'community') {
-      console.log('communityObject:', communityObject)
       const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
       disposers.push(
         subscribeTopic(getCommunityTopic(community, SubscriptionLevels.COMMENT), () => {
@@ -94,7 +91,6 @@ const PostDetail = () => {
   }
   useEffect(() => {
     if(communityObject || userObject){
-    console.log('postDetail.targetType:', postDetail.targetType)
       subscribeCommentTopic(postDetail.targetType as string);
     }
  
