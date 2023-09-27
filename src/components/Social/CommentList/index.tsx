@@ -10,7 +10,6 @@ import {
   Modal,
   Animated,
   Alert,
-  FlatList,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -18,7 +17,6 @@ import {
   likedXml,
   likeXml,
   personXml,
-  replyIcon,
   threeDots,
 } from '../../../svg/svg-xml-list';
 
@@ -26,7 +24,7 @@ import type { UserInterface } from '../../../types/user.interface';
 
 import {
   addCommentReaction,
-  // getCommentsDataByIds,
+  getCommentsDataByIds,
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
 
@@ -39,8 +37,6 @@ import {
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import EditCommentModal from '../../../components/EditCommentModal';
-import ReplyCommentList from '../ReplyCommentList';
-import { CommentRepository } from '@amityco/ts-sdk-react-native';
 
 export interface IComment {
   commentId: string;
@@ -54,20 +50,17 @@ export interface IComment {
   createdAt: string;
   childrenComment: string[];
   referenceId: string;
-  parentId?: string;
 }
 export interface ICommentList {
   commentDetail: IComment;
   isReplyComment?: boolean;
   onDelete: (commentId: string) => void;
-  onReplyComment: (commentId: string,userDisplayName: string) => void
 }
 
 export default function CommentList({
   commentDetail,
   isReplyComment = false,
   onDelete,
-  onReplyComment
 }: ICommentList) {
   const {
     commentId,
@@ -88,7 +81,7 @@ export default function CommentList({
 
   const { client, apiRegion } = useAuth();
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  console.log('commentList:', commentList)
+  console.log('replyCommentList: ', commentList);
   const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -179,35 +172,15 @@ export default function CommentList({
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
-            parentId: item.parentId
           };
         })
       );
-      const filteredReplies: IComment[] = formattedCommentList.filter(item => item.parentId === commentDetail.commentId)
-      	console.log('formattedCommentList:', formattedCommentList)
-      const sortedCommentData: IComment[] = filteredReplies.sort((x, y) => {
-        return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1;
-      });
-      setCommentList([...sortedCommentData]);
+      setCommentList([...formattedCommentList]);
     }
   }, []);
   const getReplyComments = useCallback(async () => {
-    CommentRepository.getComments(
-      {
-        dataTypes: { matchType: 'any', values: ['text', 'image'] },
-        referenceId: commentDetail.referenceId,
-        referenceType: 'post',
-        parentId: commentDetail.commentId
-      },
-      ( {data: comments}) => {
-      	console.log('reply-comments:', comments)
-        if(data){
-          formatComments(comments);
-        }
-      }
-    );
-    // const replyComments = await getCommentsDataByIds(childrenComment);
-    // formatComments(replyComments);
+    const replyComments = await getCommentsDataByIds(childrenComment);
+    formatComments(replyComments);
   }, [childrenComment, formatComments]);
 
   useEffect(() => {
@@ -215,7 +188,7 @@ export default function CommentList({
       getReplyComments();
     }
     checkIsReport();
-  }, [childrenComment]);
+  }, [childrenComment, getReplyComments]);
 
   const addReactionToComment: () => Promise<void> = async () => {
     if (isLike && likeReaction) {
@@ -315,17 +288,17 @@ export default function CommentList({
           </View>
 
           <View style={styles.timeRow}>
-            <Text style={styles.headerTextTime}>
-              {getTimeDifference(createdAt)}
-            </Text>
-            {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
-            {(editedAt !== createdAt || isEditComment) &&
-
               <Text style={styles.headerTextTime}>
-                Edited
-              </Text>}
+                {getTimeDifference(createdAt)}
+              </Text>
+              {(editedAt !== createdAt || isEditComment) && <Text style={styles.dot}>·</Text>}
+              {(editedAt !== createdAt || isEditComment) &&
 
-          </View>
+                <Text style={styles.headerTextTime}>
+                  Edited
+                </Text>}
+
+            </View>
           <View style={styles.commentBubble}>
             <Text style={styles.commentText}>{textComment}</Text>
           </View>
@@ -344,31 +317,31 @@ export default function CommentList({
                 {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
               </Text>
             </TouchableOpacity>
-            {!isReplyComment && (
+            {/* {!isReplyComment && (
               <TouchableOpacity
-                onPress={() => onReplyComment && onReplyComment(commentId,user?.displayName as string)}
+                // onPress={() => addReactionToComment()}
                 style={styles.likeBtn}
               >
                 <SvgXml xml={replyIcon} width="20" height="16" />
 
                 <Text style={styles.btnText}>Reply</Text>
               </TouchableOpacity>
-            )}
+            )} */}
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
               <SvgXml xml={threeDots} width="20" height="16" />
             </TouchableOpacity>
           </View>
-          {commentList.length > 0 && (
+          {/* {commentList.length > 0 && (
             <FlatList
               data={commentList}
               renderItem={({ item }) => (
-                <ReplyCommentList commentDetail={item} />
+                <CommentList commentDetail={item} isReplyComment />
               )}
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
             />
-          )}
+          )} */}
         </View>
       </View>
       <Modal

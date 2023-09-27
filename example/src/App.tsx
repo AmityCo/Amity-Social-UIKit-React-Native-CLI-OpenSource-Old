@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { AmityUiKitProvider, AmityUiKitSocial } from 'amity-react-native-social-ui-kit';
+
+import {
+  AmityUiKitSocial,
+  AmityUiKitProvider,
+} from 'amity-react-native-social-ui-kit';
 
 export default function App() {
   return (

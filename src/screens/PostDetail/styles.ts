@@ -56,19 +56,4 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#EBECEF',
   },
-  replyKeyboardWrap:{
-    backgroundColor:'#EBECEF',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems:'center'
-  },
-  replyText:{
-    color: '#636878',
-    fontSize: 15
-  },
-  closeIcon:{
-    opacity: 0.7
-  }
 });
