@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 
 import {
@@ -10,7 +10,6 @@ import {
   Modal,
   Animated,
   Alert,
-  FlatList,
 } from 'react-native';
 import styles from './styles';
 import { SvgXml } from 'react-native-svg';
@@ -18,7 +17,6 @@ import {
   likedXml,
   likeXml,
   personXml,
-  replyIcon,
   threeDots,
 } from '../../../svg/svg-xml-list';
 
@@ -26,11 +24,9 @@ import type { UserInterface } from '../../../types/user.interface';
 
 import {
   addCommentReaction,
-  // getCommentsDataByIds,
   removeCommentReaction,
 } from '../../../providers/Social/comment-sdk';
 
-import { getAmityUser } from '../../../providers/user-provider';
 import { Pressable } from 'react-native';
 import useAuth from '../../../hooks/useAuth';
 import {
@@ -39,8 +35,7 @@ import {
   unReportTargetById,
 } from '../../../providers/Social/feed-sdk';
 import EditCommentModal from '../../../components/EditCommentModal';
-import ReplyCommentList from '../ReplyCommentList';
-import { CommentRepository } from '@amityco/ts-sdk-react-native';
+
 
 export interface IComment {
   commentId: string;
@@ -54,20 +49,15 @@ export interface IComment {
   createdAt: string;
   childrenComment: string[];
   referenceId: string;
-  parentId?: string;
 }
 export interface ICommentList {
   commentDetail: IComment;
   isReplyComment?: boolean;
-  onDelete: (commentId: string) => void;
-  onReplyComment: (commentId: string,userDisplayName: string) => void
+  onDelete?: (commentId: string) => void;
 }
 
-export default function CommentList({
+export default function ReplyCommentList({
   commentDetail,
-  isReplyComment = false,
-  onDelete,
-  onReplyComment
 }: ICommentList) {
   const {
     commentId,
@@ -76,7 +66,6 @@ export default function CommentList({
     createdAt,
     reactions,
     myReactions,
-    childrenComment,
     editedAt
   } = commentDetail;
   const [isLike, setIsLike] = useState<boolean>(
@@ -87,8 +76,7 @@ export default function CommentList({
   );
 
   const { client, apiRegion } = useAuth();
-  const [commentList, setCommentList] = useState<IComment[]>([]);
-  console.log('commentList:', commentList)
+
   const [textComment, setTextComment] = useState<string>(data.text)
   const [isVisible, setIsVisible] = useState(false);
   const [isReportByMe, setIsReportByMe] = useState<boolean>(false);
@@ -154,68 +142,10 @@ export default function CommentList({
     }
   }
 
-  const formatComments = useCallback(async (replyComments) => {
-    if (replyComments && replyComments.length > 0) {
-      const formattedCommentList = await Promise.all(
-        replyComments.map(async (item: Amity.Comment) => {
-          const { userObject } = await getAmityUser(item.userId);
-          let formattedUserObject: UserInterface;
-
-          formattedUserObject = {
-            userId: userObject.data.userId,
-            displayName: userObject.data.displayName,
-            avatarFileId: userObject.data.avatarFileId,
-          };
-
-          return {
-            commentId: item.commentId,
-            data: item.data as Record<string, any>,
-            dataType: item.dataType,
-            myReactions: item.myReactions as string[],
-            reactions: item.reactions as Record<string, number>,
-            user: formattedUserObject as UserInterface,
-            updatedAt: item.updatedAt,
-            editedAt: item.editedAt,
-            createdAt: item.createdAt,
-            childrenComment: item.children,
-            referenceId: item.referenceId,
-            parentId: item.parentId
-          };
-        })
-      );
-      const filteredReplies: IComment[] = formattedCommentList.filter(item => item.parentId === commentDetail.commentId)
-      	console.log('formattedCommentList:', formattedCommentList)
-      const sortedCommentData: IComment[] = filteredReplies.sort((x, y) => {
-        return new Date(x.createdAt) < new Date(y.createdAt) ? 1 : -1;
-      });
-      setCommentList([...sortedCommentData]);
-    }
-  }, []);
-  const getReplyComments = useCallback(async () => {
-    CommentRepository.getComments(
-      {
-        dataTypes: { matchType: 'any', values: ['text', 'image'] },
-        referenceId: commentDetail.referenceId,
-        referenceType: 'post',
-        parentId: commentDetail.commentId
-      },
-      ( {data: comments}) => {
-      	console.log('reply-comments:', comments)
-        if(data){
-          formatComments(comments);
-        }
-      }
-    );
-    // const replyComments = await getCommentsDataByIds(childrenComment);
-    // formatComments(replyComments);
-  }, [childrenComment, formatComments]);
 
   useEffect(() => {
-    if (childrenComment.length > 0) {
-      getReplyComments();
-    }
     checkIsReport();
-  }, [childrenComment]);
+  }, [commentDetail]);
 
   const addReactionToComment: () => Promise<void> = async () => {
     if (isLike && likeReaction) {
@@ -241,7 +171,7 @@ export default function CommentList({
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => onDelete && onDelete(commentId),
+          // onPress: () => onDelete && onDelete(commentId),
         },
       ]
     );
@@ -287,14 +217,16 @@ export default function CommentList({
   const onCloseEditCommentModal = () => {
     setEditCommentModal(false)
   }
+
+ 
   return (
     <View
       key={commentId}
-      style={isReplyComment ? styles.replyCommentWrap : styles.commentWrap}
+      style={styles.replyCommentWrap}
     >
       <View
         style={
-          isReplyComment ? styles.replyHeaderSection : styles.headerSection
+        styles.replyHeaderSection 
         }
       >
         {user?.avatarFileId ? (
@@ -344,31 +276,21 @@ export default function CommentList({
                 {!isLike && likeReaction === 0 ? 'Like' : likeReaction}
               </Text>
             </TouchableOpacity>
-            {!isReplyComment && (
-              <TouchableOpacity
-                onPress={() => onReplyComment && onReplyComment(commentId,user?.displayName as string)}
-                style={styles.likeBtn}
-              >
-                <SvgXml xml={replyIcon} width="20" height="16" />
-
-                <Text style={styles.btnText}>Reply</Text>
-              </TouchableOpacity>
-            )}
 
             <TouchableOpacity onPress={openModal} style={styles.threeDots}>
               <SvgXml xml={threeDots} width="20" height="16" />
             </TouchableOpacity>
           </View>
-          {commentList.length > 0 && (
+          {/* {commentList.length > 0 && (
             <FlatList
               data={commentList}
               renderItem={({ item }) => (
-                <ReplyCommentList commentDetail={item} />
+                <CommentList commentDetail={item} isReplyComment />
               )}
               keyExtractor={(item) => item.commentId.toString()}
               onEndReachedThreshold={0.8}
             />
-          )}
+          )} */}
         </View>
       </View>
       <Modal

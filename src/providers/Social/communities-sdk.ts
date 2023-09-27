@@ -32,6 +32,8 @@ export function createCommunity(communityParam: ICreateCommunity): Promise<any> 
       categoryIds: [communityParam.category] as string[],
       userIds: communityParam.userIds as string[],
       postSetting: CommunityPostSettings.ANYONE_CAN_POST,
+      avatarFileId:''
+      
     };
 
     const { data: community } = await CommunityRepository.createCommunity(newCommunity);

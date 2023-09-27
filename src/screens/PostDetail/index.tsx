@@ -25,8 +25,11 @@ import CommentList from '../../components/Social/CommentList';
 import { CommentRepository, CommunityRepository, SubscriptionLevels, UserRepository, getCommunityTopic, getUserTopic, subscribeTopic } from '@amityco/ts-sdk-react-native';
 import {
   createComment,
+  createReplyComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
+import { SvgXml } from 'react-native-svg';
+import { closeIcon } from '../../svg/svg-xml-list';
 
 const PostDetail = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
@@ -38,20 +41,26 @@ const PostDetail = () => {
     initImagePostsFullSize,
   } = route.params;
   const [commentList, setCommentList] = useState<IComment[]>([]);
-  const [commentCollection, setCommentCollection] =useState<Amity.LiveCollection<Amity.Comment>>();
+  const [commentCollection, setCommentCollection] = useState<Amity.LiveCollection<Amity.InternalComment>>();
   const { data: comments, hasNextPage, onNextPage } = commentCollection ?? {};
+  console.log('comments:', comments)
   const [unSubscribeFunc, setUnSubscribeFunc] = useState<() => void>();
   const [inputMessage, setInputMessage] = useState('');
   const [communityObject, setCommunityObject] = useState<Amity.Community>()
   const [userObject, setUserObject] = useState<Amity.User>()
-  console.log('unSubscribeFunc: ', unSubscribeFunc);
+  const [replyUser, setReplyUser] = useState<string>('')
+  const [replyCommentId, setReplyCommentId] = useState<string>('')
+
   const flatListRef = useRef(null);
+  const textInputRef = useRef(null);
+
+
   let isSubscribed = false;
   const disposers: Amity.Unsubscriber[] = [];
-  
+
   const subscribeCommentTopic = (targetType: string) => {
     if (isSubscribed) return;
-  
+
     if (targetType === 'user') {
       const user = userObject as Amity.User; // use getUser to get user by targetId
       disposers.push(
@@ -62,7 +71,7 @@ const PostDetail = () => {
       isSubscribed = true;
       return;
     }
-  
+
     if (targetType === 'community') {
       const community = communityObject as Amity.Community; // use getCommunity to get community by targetId
       disposers.push(
@@ -79,8 +88,9 @@ const PostDetail = () => {
         dataTypes: { matchType: 'any', values: ['text', 'image'] },
         referenceId: postId,
         referenceType: 'post',
+        limit: 10
       },
-      (data: Amity.LiveCollection<Amity.Comment>) => {
+      (data: Amity.LiveCollection<Amity.InternalComment<any>>) => {
         if (data.error) throw data.error;
         if (!data.loading) {
           setCommentCollection(data);
@@ -90,20 +100,22 @@ const PostDetail = () => {
     setUnSubscribeFunc(() => unsubscribe);
   }
   useEffect(() => {
-    if(communityObject || userObject){
+    if (communityObject || userObject) {
       subscribeCommentTopic(postDetail.targetType as string);
     }
- 
-  }, [communityObject,userObject])
-  
+    return () => {
+      unSubscribeFunc && unSubscribeFunc()
+    }
+  }, [communityObject, userObject])
+
   useEffect(() => {
 
-    if(postDetail.targetType === 'community'){
-      CommunityRepository.getCommunity(postDetail.targetId, ({data: community})=>{
+    if (postDetail.targetType === 'community') {
+      CommunityRepository.getCommunity(postDetail.targetId, ({ data: community }) => {
         setCommunityObject(community)
       });
-    }else if(postDetail.targetType === 'user'){
-      UserRepository.getUser(postDetail.targetId, ({data: user})=>{
+    } else if (postDetail.targetType === 'user') {
+      UserRepository.getUser(postDetail.targetId, ({ data: user }) => {
         setUserObject(user)
       });
     }
@@ -113,7 +125,7 @@ const PostDetail = () => {
   const queryComment = useCallback(async () => {
     if (comments && comments.length > 0) {
       const formattedCommentList = await Promise.all(
-        comments.map(async (item: Amity.Comment) => {
+        comments.map(async (item: Amity.InternalComment) => {
           const { userObject } = await getAmityUser(item.userId);
           let formattedUserObject: UserInterface;
 
@@ -135,10 +147,19 @@ const PostDetail = () => {
             createdAt: item.createdAt,
             childrenComment: item.children,
             referenceId: item.referenceId,
+            parentId: item.parentId
           };
         })
       );
-      setCommentList([...formattedCommentList]);
+      const filteredReplies: IComment[] = formattedCommentList.filter((item) => {
+        if (item.parentId) {
+          return;
+        } else {
+          return item
+        }
+
+      })
+      setCommentList([...filteredReplies]);
     }
   }, [comments]);
 
@@ -165,8 +186,14 @@ const PostDetail = () => {
       return;
     }
     Keyboard.dismiss();
-    setInputMessage('');
-    await createComment(inputMessage, postDetail.postId);
+    if (replyUser.length > 0) {
+      await createReplyComment(inputMessage, postDetail.postId, replyCommentId);
+      setReplyUser('')
+      setReplyCommentId('')
+    } else {
+      await createComment(inputMessage, postDetail.postId);
+    }
+
     setInputMessage('');
   };
   const onDeleteComment = async (commentId: string) => {
@@ -179,6 +206,22 @@ const PostDetail = () => {
       setCommentList(updatedCommentList);
     }
   };
+
+  const onReplyComment = (commentId: string, userDisplayName: string) => {
+    console.log('userDisplayName:', userDisplayName)
+    console.log('commentId:', commentId)
+    if (textInputRef.current) {
+      setReplyCommentId(commentId)
+      const inputRef = textInputRef.current as TextInput; // Type assertion
+      inputRef.focus();
+      setReplyUser(userDisplayName)
+    }
+  };
+
+  const onCloseReply = () => {
+    setReplyUser('')
+    Keyboard.dismiss()
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -200,7 +243,7 @@ const PostDetail = () => {
           <FlatList
             data={commentList}
             renderItem={({ item }) => (
-              <CommentList onDelete={onDeleteComment} commentDetail={item} />
+              <CommentList onDelete={onDeleteComment} commentDetail={item} onReplyComment={onReplyComment} />
             )}
             keyExtractor={(item) => item.commentId.toString()}
             onEndReachedThreshold={0.8}
@@ -208,13 +251,23 @@ const PostDetail = () => {
           />
         </View>
       </ScrollView>
+      {replyUser.length > 0 &&
+        <View style={styles.replyKeyboardWrap}>
+          <Text style={styles.replyText}>Replying to {replyUser}</Text>
+          <TouchableOpacity onPress={onCloseReply}>
+            <SvgXml style={styles.closeIcon} xml={closeIcon} width={20} />
+          </TouchableOpacity>
+        </View>}
 
       <View style={styles.InputWrap}>
+
         <TextInput
           onChangeText={(text) => setInputMessage(text)}
           style={styles.input}
           placeholder="Say something nice..."
           value={inputMessage}
+          ref={textInputRef}
+          editable
         />
         <TouchableOpacity
           disabled={inputMessage.length > 0 ? false : true}
