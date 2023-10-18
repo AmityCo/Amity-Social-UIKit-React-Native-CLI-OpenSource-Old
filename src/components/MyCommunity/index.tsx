@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { CommunityRepository } from '@amityco/ts-sdk-react-native';
 import { arrowOutlined, communityIcon, officialIcon, privateIcon } from '../../svg/svg-xml-list';
 import { SvgXml } from 'react-native-svg';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import useAuth from '../../hooks/useAuth';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 interface ICommunityItems {
   communityId: string;
@@ -17,6 +19,8 @@ interface ICommunityItems {
 
 }
 export default function MyCommunity() {
+  const theme = useTheme() as MyMD3Theme ;
+  const styles = getStyles();
   const { apiRegion } = useAuth();
   const maxLength = 6;
   const [communityItems, setCommunityItems] = useState<ICommunityItems[]>([])
@@ -74,7 +78,7 @@ export default function MyCommunity() {
             style={styles.arrowIcon}
             width={17}
             height={17}
-            xml={arrowOutlined}
+            xml={arrowOutlined(theme.colors.base)}
           />
         </TouchableOpacity>
 
@@ -95,14 +99,14 @@ export default function MyCommunity() {
                 <SvgXml
                   width={17}
                   height={17}
-                  xml={privateIcon}
+                  xml={privateIcon(theme.colors.base)}
                 />}
               <Text style={styles.itemText}>{displayName(item.displayName, !item.isPublic?'private': 'public')}</Text>
               {item.isOfficial &&
                 <SvgXml
                   width={20}
                   height={20}
-                  xml={officialIcon}
+                  xml={officialIcon(theme.colors.primary)}
                 />}
             </View>
 
@@ -115,7 +119,7 @@ export default function MyCommunity() {
             <SvgXml
               width={15}
               height={15}
-              xml={arrowOutlined}
+              xml={arrowOutlined(theme.colors.base)}
             />
           </View>
           <Text style={styles.seeAllText}>See all</Text>

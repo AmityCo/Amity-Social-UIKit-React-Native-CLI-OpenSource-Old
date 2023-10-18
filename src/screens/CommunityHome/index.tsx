@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import CustomTab from '../../components/CustomTab';
 import CloseButton from '../../components/BackButton';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import Feed from '../Feed';
 import useAuth from '../../hooks/useAuth';
 
@@ -23,6 +23,7 @@ export type FeedRefType = {
 
 export default function CommunityHome({ navigation, route }: any) {
 
+  const styles = getStyles();
   const { apiRegion } = useAuth();
   const { communityId, communityName } = route.params;
   const [isJoin, setIsJoin] = useState(true);
@@ -42,7 +43,7 @@ export default function CommunityHome({ navigation, route }: any) {
       triggerLoadMoreFunction();
     }
   };
-  const onBackPress=()=>{
+  const onBackPress = () => {
     navigation.navigate('Home')
   }
   React.useLayoutEffect(() => {
@@ -155,8 +156,8 @@ export default function CommunityHome({ navigation, route }: any) {
           source={
             communityData?.data.avatarFileId
               ? {
-                  uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
-                }
+                uri: `https://api.${apiRegion}.amity.co/api/v3/files/${communityData?.data.avatarFileId}/download?size=medium`,
+              }
               : require('../../../assets/icon/Placeholder.png')
           }
         />

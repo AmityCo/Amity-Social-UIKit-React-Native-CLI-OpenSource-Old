@@ -17,7 +17,7 @@ import {
 import type { RootStackParamList } from 'src/routes/RouteParamList';
 import PostList from '../../components/Social/PostList';
 
-import { styles } from './styles';
+import { getStyles } from './styles';
 import type { IComment } from '../../components/Social/CommentList';
 import type { UserInterface } from '../../types/user.interface';
 import { getAmityUser } from '../../providers/user-provider';
@@ -27,8 +27,13 @@ import {
   createComment,
   deleteCommentById,
 } from '../../providers/Social/comment-sdk';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 const PostDetail = () => {
+
+  const theme = useTheme() as MyMD3Theme ;
+  const styles = getStyles();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetail'>>();
   const {
     postDetail,
@@ -215,6 +220,7 @@ const PostDetail = () => {
           style={styles.input}
           placeholder="Say something nice..."
           value={inputMessage}
+          placeholderTextColor={theme.colors.baseShade3}
         />
         <TouchableOpacity
           disabled={inputMessage.length > 0 ? false : true}
@@ -233,3 +239,5 @@ const PostDetail = () => {
   );
 };
 export default PostDetail;
+
+

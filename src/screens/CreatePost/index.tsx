@@ -21,11 +21,13 @@ import {
   galleryIcon,
   playVideoIcon,
 } from '../../svg/svg-xml-list';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import ImagePicker, { launchImageLibrary, type Asset, launchCamera } from 'react-native-image-picker';
 import LoadingImage from '../../components/LoadingImage';
 import { createPostToFeed } from '../../providers/Social/feed-sdk';
 import LoadingVideo from '../../components/LoadingVideo';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
+import { useTheme } from 'react-native-paper';
 
 export interface IDisplayImage {
   url: string;
@@ -35,6 +37,8 @@ export interface IDisplayImage {
   thumbNail?: string;
 }
 const CreatePost = ({ route }: any) => {
+  const theme = useTheme() as MyMD3Theme;
+  const styles = getStyles();
   const { targetId, targetType, targetName } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [inputMessage, setInputMessage] = useState('');
@@ -52,7 +56,7 @@ const CreatePost = ({ route }: any) => {
       <SafeAreaView style={styles.barContainer} edges={['top']}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={goBack}>
-            <SvgXml xml={closeIcon} width="17" height="17" />
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{targetName}</Text>
@@ -351,6 +355,7 @@ const CreatePost = ({ route }: any) => {
             style={styles.textInput}
             value={inputMessage}
             onChangeText={(text) => setInputMessage(text)}
+            placeholderTextColor={theme.colors.baseShade3}
           />
           <View style={styles.imageContainer}>
             {displayImages.length > 0 && (
@@ -416,7 +421,7 @@ const CreatePost = ({ route }: any) => {
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-            <SvgXml xml={arrowDown} width="20" height="20" />
+            <SvgXml xml={arrowDown(theme.colors.base)} width="20" height="20" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

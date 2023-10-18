@@ -10,12 +10,15 @@ import {
 } from '../../providers/Social/feed-sdk';
 import useAuth from '../../hooks/useAuth';
 import PostList, { type IPost } from '../../components/Social/PostList';
-import styles from './styles';
+import { getStyles } from './styles';
 import { getAmityUser } from '../../providers/user-provider';
 import type { UserInterface } from '../../types/user.interface';
 import MyCommunity from '../../components/MyCommunity';
 
+
 export default function GlobalFeed() {
+
+  const styles = getStyles();
   const { client, isConnected } = useAuth();
   const [postData, setPostData] = useState<IGlobalFeedRes>();
   const [postList, setPostList] = useState<IPost[]>([]);

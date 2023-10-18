@@ -11,12 +11,14 @@ import {
   TextInput,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { circleCloseIcon, closeIcon, searchIcon } from '../../svg/svg-xml-list';
 import type { UserInterface } from '../../types/user.interface';
 import UserItem from '../UserItem';
 import SectionHeader from '../ListSectionHeader';
 import SelectedUserHorizontal from '../SelectedUserHorizontal';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from 'src/providers/amity-ui-kit-provider';
 interface IModal {
   visible: boolean;
   userId?: string;
@@ -29,6 +31,8 @@ export type SelectUserList = {
   data: UserInterface[];
 };
 const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) => {
+  const styles = getStyles();
+  const theme = useTheme() as MyMD3Theme;
   const [sectionedUserList, setSectionedUserList] = useState<SelectUserList[]>([]);
   const [sectionedGroupUserList, setSectionedGroupUserList] = useState<SelectUserList[]>([]);
   const [selectedUserList, setSelectedUserList] = useState<UserInterface[]>(initUserList);
@@ -177,7 +181,7 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.closeButton} onPress={handleOnClose}>
-            <SvgXml xml={closeIcon} width="17" height="17" />
+            <SvgXml xml={closeIcon(theme.colors.base)} width="17" height="17" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Select Member</Text>
@@ -188,7 +192,7 @@ const AddMembersModal = ({ visible, onClose, onSelect, initUserList }: IModal) =
         </View>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => queryAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon} width="20" height="20" />
+            <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
           </TouchableOpacity>
           <TextInput
             style={styles.input}

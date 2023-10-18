@@ -13,6 +13,8 @@ import { createThumbnail, type Thumbnail } from 'react-native-create-thumbnail';
 import Video from 'react-native-video';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 interface OverlayImageProps {
   source: string;
@@ -53,7 +55,8 @@ const LoadingVideo = ({
   const [isPause, setIsPause] = useState<boolean>(true)
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const videoPlayerRef = useRef(null);
-
+  const theme = useTheme() as MyMD3Theme;
+  
   const playVideoFullScreen = (fileUrl: string) => {
     if (Platform.OS === 'ios') {
       setIsPlaying(true)
@@ -182,7 +185,7 @@ const LoadingVideo = ({
       )}
       {!loading && (
         <TouchableOpacity style={styles.closeButton} onPress={handleDelete}>
-          <SvgXml xml={closeIcon} width="12" height="12" />
+          <SvgXml xml={closeIcon(theme.colors.base)} width="12" height="12" />
         </TouchableOpacity>
       )}
       {/* <Video

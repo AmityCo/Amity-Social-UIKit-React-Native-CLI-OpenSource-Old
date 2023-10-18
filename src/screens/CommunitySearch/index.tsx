@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './styles';
+import { getStyles } from './styles';
 import { SvgXml } from 'react-native-svg';
 import { circleCloseIcon, searchIcon } from '../../svg/svg-xml-list';
 import { useNavigation } from '@react-navigation/native';
@@ -17,9 +17,13 @@ import CustomTab from '../../components/CustomTab';
 import { CommunityRepository, UserRepository } from '@amityco/ts-sdk-react-native';
 import type { ISearchItem } from '../../components/SearchItem';
 import SearchItem from '../../components/SearchItem';
+import { useTheme } from 'react-native-paper';
+import type { MyMD3Theme } from '../../providers/amity-ui-kit-provider';
 
 export default function CommunitySearch() {
+  const theme = useTheme() as MyMD3Theme;
   LogBox.ignoreAllLogs(true);
+  const styles = getStyles();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchType, setSearchType] = useState('community');
   const [communities, setCommunities] =
@@ -134,11 +138,11 @@ export default function CommunitySearch() {
     }
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerWrap}>
         <View style={styles.inputWrap}>
           <TouchableOpacity onPress={() => searchAccounts(searchTerm)}>
-            <SvgXml xml={searchIcon} width="20" height="20" />
+            <SvgXml xml={searchIcon(theme.colors.base)} width="20" height="20" />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
