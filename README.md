@@ -106,7 +106,76 @@ export default function App() {
   );
 }
 ```
+### Using Theme
 
+#### Using the default theme
+AmityUIKit uses the default theme as part of the design language.
+
+#### Theme customization
+Without customization, the UIKit already looks good. However, if you wish to customize the theme, you can declare changes to color variables by passing your own color codes to our UIKit. Here is the code usage of how to customize the theme.
+
+```js
+import * as React from 'react';
+
+import {
+  AmityUiKitSocial,
+  AmityUiKitProvider,
+} from 'amity-react-native-social-ui-kit';
+
+export default function App() {
+
+ const myTheme = {
+  primary: '#1054DE',      // Primary color for main elements
+  secondary: '#636878',    // Secondary color UI elements e.g comment bubble, input bar 
+  background: '#1E1E1E',   // Background color for components
+  border: '#EBECEF',       // Border color for elements
+  base: '#FFFFFF',         // Base color for main text, Title, input text 
+  baseShade1: '#EBECEF',   // Base color for Sub Text, Sub Title, TimeStamp Text
+  baseShade2: '#EBECEF',   // Base color for comments, like text
+  baseShade3: '#EBECEF',   // Base color for placeHolder
+  screenBackground: '#000000' // Background color for screens
+};
+
+  return (
+    <AmityUiKitProvider
+      apiKey="API_KEY"
+      apiRegion="API_REGION"
+      userId="userId"
+      displayName="displayName"
+      apiEndpoint="https://api.{API_REGION}.amity.co"
+      theme={myTheme}
+    >
+      <AmityUiKitSocial />
+    </AmityUiKitProvider>
+  );
+}
+```
+#### Dark Mode
+The Dark Mode feature in our UIKit enhances user experience by providing an alternative visual style that is particularly beneficial in low-light environments. It's designed to reduce eye strain, improve readability, and offer a more visually comfortable interface. You can enable dark mode by just passing variable `darkMode` to the `AmityUiKitProvider`
+
+```js
+import * as React from 'react';
+
+import {
+  AmityUiKitSocial,
+  AmityUiKitProvider,
+} from 'amity-react-native-social-ui-kit';
+
+export default function App() {
+  return (
+    <AmityUiKitProvider
+      apiKey="API_KEY"
+      apiRegion="API_REGION"
+      userId="userId"
+      displayName="displayName"
+      apiEndpoint="https://api.{API_REGION}.amity.co"
+      darkMode
+    >
+      <AmityUiKitSocial />
+    </AmityUiKitProvider>
+  );
+}
+```
 ```
 ### Documentation
 
